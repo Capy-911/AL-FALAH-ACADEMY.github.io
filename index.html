@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#082a20">
+<title>AL FALAH ACADEMY</title>
+<link rel="icon" type="image/png" href="IMG.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Marcellus&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  /* Runs before first paint so the correct theme is applied instantly (no flash) */
+  (function(){
+    try{
+      var saved = localStorage.getItem('af-theme');
+      var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    }catch(e){
+      document.documentElement.setAttribute('data-theme','light');
+    }
+    try{
+      /* Always open the page at the top on reload instead of restoring old scroll position */
+      if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; }
+    }catch(e){}
+  })();
+  window.scrollTo(0,0);
+</script>
+<style>
+  :root{
+    --emerald-deep:#00b37d;
+    --emerald-darker:#082a20;
+    --gold:#ffdb63;
+    --gold-soft:#e6c766;
+    --cream:#f7f3e8;
+    --ink:#002513;
+    --line: rgba(145, 111, 0, 0.35);
+
+    --page-bg: var(--cream);
+    --page-text: var(--ink);
+    --page-text-soft: #2d3832;
+    --surface: #ffffff;
+    --surface-line: var(--line);
+    --card-bg: rgba(0,179,125,0.05);
+  }
+
+  [data-theme="dark"]{
+    --page-bg: #081711;
+    --page-text: #f2ede0;
+    --page-text-soft: rgba(242,237,224,0.78);
+    --surface: #0e2119;
+    --surface-line: rgba(255,219,99,0.22);
+    --card-bg: rgba(255,219,99,0.05);
+    --cream: #f2ede0;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--page-bg);
+    color:var(--page-text);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    transition: background 0.45s ease, color 0.45s ease;
+  }
+
+  .curtain{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:var(--emerald-darker);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation: curtainOut 0.9s ease 1.4s forwards;
+    pointer-events:none;
+  }
+  .curtain-mark{
+    width:64px;height:64px;
+    border:1.5px solid var(--gold);
+    transform:rotate(45deg);
+    position:relative;
+    animation: curtainMarkPulse 1.3s ease infinite;
+  }
+  .curtain-mark::before{
+    content:'';
+    position:absolute;
+    inset:12px;
+    border:1px solid var(--gold);
+  }
+  @keyframes curtainMarkPulse{
+    0%,100%{opacity:0.4; transform:rotate(45deg) scale(0.85);}
+    50%{opacity:1; transform:rotate(45deg) scale(1);}
+  }
+  @keyframes curtainOut{
+    0%{opacity:1; visibility:visible;}
+    100%{opacity:0; visibility:hidden;}
+  }
+
+  .cursor-glow{
+    position:fixed;
+    width:420px; height:420px;
+    border-radius:50%;
+    pointer-events:none;
+    background:radial-gradient(circle, rgba(201,162,39,0.10), transparent 70%);
+    transform:translate(-50%,-50%);
+    z-index:1;
+    transition: opacity 0.4s ease;
+    opacity:0;
+  }
+  .hero:hover .cursor-glow{opacity:1;}
+
+  @media (max-width:720px){
+    .cursor-glow{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  h1,h2,h3{
+    font-family:'Marcellus', serif;
+    font-weight:400;
+    letter-spacing:0.03em;
+  }
+
+  a{color:inherit; text-decoration:none;}
+
+  .motif-line{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin: 18px auto;
+    width:fit-content;
+  }
+  .motif-line .diamond{
+    width:8px;height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    animation: pulseGold 3s ease-in-out infinite;
+  }
+  .motif-line .bar{
+    width:60px;height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  @keyframes pulseGold{
+    0%,100%{opacity:0.5; transform:rotate(45deg) scale(1);}
+    50%{opacity:1; transform:rotate(45deg) scale(1.3);}
+  }
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(11,61,46,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 32px;
+    gap:16px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .brand img{
+    width:42px;height:42px;
+    border-radius:50%;
+    border:1.5px solid var(--gold);
+    object-fit:cover;
+    background:var(--emerald-darker);
+    flex-shrink:0;
+  }
+  .brand span{
+    font-family:'Marcellus', serif;
+    color:var(--cream);
+    font-size:1.15rem;
+    letter-spacing:0.12em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .nav-right{
+    display:flex;
+    align-items:center;
+    gap:22px;
+  }
+  .nav-links{
+    display:flex;
+    gap:38px;
+    list-style:none;
+  }
+  .nav-links li a{
+    color:var(--cream);
+    font-size:0.85rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    position:relative;
+    padding-bottom:6px;
+    transition:color 0.3s ease;
+  }
+  .nav-links li a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:1px;
+    background:var(--gold);
+    transition:width 0.35s ease;
+  }
+  .nav-links li a:hover{color:var(--gold-soft);}
+  .nav-links li a:hover::after{width:100%;}
+
+  .theme-toggle{
+    position:relative;
+    width:44px; height:44px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.03);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+  }
+  .theme-toggle:hover{
+    border-color:var(--gold);
+    transform:rotate(-8deg) scale(1.06);
+  }
+  .theme-toggle svg{
+    width:20px; height:20px;
+    stroke:var(--gold-soft);
+    fill:none;
+    stroke-width:1.6;
+    transition: transform 0.5s ease, opacity 0.35s ease;
+  }
+  .theme-toggle .icon-sun{position:absolute; opacity:0; transform:rotate(-90deg) scale(0.5);}
+  .theme-toggle .icon-moon{position:absolute; opacity:1; transform:rotate(0) scale(1);}
+  [data-theme="dark"] .theme-toggle .icon-sun{opacity:1; transform:rotate(0) scale(1);}
+  [data-theme="dark"] .theme-toggle .icon-moon{opacity:0; transform:rotate(90deg) scale(0.5);}
+
+  .burger{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    cursor:pointer;
+    background:none;
+    border:none;
+  }
+  .burger span{
+    width:26px;height:2px;
+    background:var(--gold);
+    transition:all 0.3s ease;
+  }
+
+  .hero{
+    position:relative;
+    min-height:92vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:120px 24px 80px;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(201,162,39,0.10), transparent 55%),
+      linear-gradient(180deg, var(--emerald-deep) 0%, var(--emerald-darker) 100%);
+    color:var(--cream);
+    overflow:hidden;
+  }
+
+  .hero::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:60px 60px;
+    opacity:0.12;
+    animation: driftGrid 40s linear infinite;
+  }
+  @keyframes driftGrid{
+    0%{background-position:0 0;}
+    100%{background-position:600px 600px;}
+  }
+
+  .hero-crest{
+    width:120px;height:120px;
+    border-radius:50%;
+    border:2px solid var(--gold);
+    padding:6px;
+    margin-bottom:28px;
+    animation: floatIn 1.2s ease both, floatBob 5s ease-in-out 1.2s infinite;
+    position:relative;
+    z-index:2;
+    box-shadow:0 0 40px rgba(201,162,39,0.25);
+  }
+  .hero-crest img{
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:50%;
+    display:block;
+  }
+
+  @keyframes floatIn{
+    from{opacity:0; transform:translateY(-30px) scale(0.9);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @keyframes floatBob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+  }
+
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 4.6rem);
+    letter-spacing:0.08em;
+    opacity:0;
+    animation: revealUp 1s ease 0.3s forwards;
+    position:relative; z-index:2;
+    background: linear-gradient(100deg, var(--cream) 30%, var(--gold-soft) 45%, var(--cream) 60%);
+    background-size:300% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    animation: revealUp 1s ease 0.3s forwards, shimmerText 6s linear 1.6s infinite;
+  }
+  @keyframes shimmerText{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
+
+  .particles{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .particles span{
+    position:absolute;
+    bottom:-10px;
+    width:4px;height:4px;
+    background:var(--gold);
+    border-radius:50%;
+    opacity:0.55;
+    animation-name: floatUp;
+    animation-timing-function:ease-in;
+    animation-iteration-count:infinite;
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(0) translateX(0); opacity:0;}
+    10%{opacity:0.6;}
+    90%{opacity:0.4;}
+    100%{transform:translateY(-100vh) translateX(20px); opacity:0;}
+  }
+
+  .reveal.stagger-1{transition-delay:0.08s;}
+  .reveal.stagger-2{transition-delay:0.18s;}
+  .reveal.stagger-3{transition-delay:0.28s;}
+  .reveal.stagger-4{transition-delay:0.38s;}
+
+  .hero .eyebrow{
+    font-family:'Jost', sans-serif;
+    letter-spacing:0.4em;
+    text-transform:uppercase;
+    font-size:0.75rem;
+    color:var(--gold-soft);
+    opacity:0;
+    animation: revealUp 1s ease 0.1s forwards;
+    position:relative; z-index:2;
+  }
+
+  .hero h2{
+    margin-top:22px;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(1.15rem, 2.4vw, 1.6rem);
+    color:var(--gold-soft);
+    opacity:0;
+    animation: revealUp 1s ease 0.55s forwards;
+    position:relative; z-index:2;
+    max-width:720px;
+  }
+
+  @keyframes revealUp{
+    from{opacity:0; transform:translateY(24px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .hero-cta{
+    margin-top:40px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+    opacity:0;
+    animation: revealUp 1s ease 0.8s forwards;
+    position:relative; z-index:2;
+  }
+  .btn{
+    padding:14px 34px;
+    font-size:0.82rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    border-radius:2px;
+    cursor:pointer;
+    transition:transform 0.25s ease, box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+    border:1px solid var(--gold);
+    will-change:transform;
+    position:relative;
+    overflow:hidden;
+    font-family:inherit;
+  }
+  .btn::before{
+    content:'';
+    position:absolute;
+    top:0; left:-120%;
+    width:60%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform:skewX(-20deg);
+    transition:left 0.65s ease;
+  }
+  .btn:hover::before{left:130%;}
+  .btn-solid{
+    background:var(--gold);
+    color:var(--emerald-darker);
+  }
+  .btn-solid:hover{
+    background:var(--gold-soft);
+    box-shadow:0 0 24px rgba(201,162,39,0.5);
+    transform:translateY(-2px);
+  }
+  .btn-outline{
+    background:transparent;
+    color:var(--cream);
+  }
+  .btn-outline:hover{
+    border-color:var(--cream);
+    background:rgba(247,243,232,0.08);
+    transform:translateY(-2px);
+  }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:34px; left:50%;
+    transform:translateX(-50%);
+    width:22px; height:36px;
+    border:1.5px solid var(--gold);
+    border-radius:12px;
+    z-index:2;
+  }
+  .scroll-cue::before{
+    content:'';
+    position:absolute;
+    top:6px; left:50%;
+    transform:translateX(-50%);
+    width:3px;height:6px;
+    background:var(--gold);
+    border-radius:2px;
+    animation: cueDrop 1.8s ease-in-out infinite;
+  }
+  @keyframes cueDrop{
+    0%{opacity:1; top:6px;}
+    70%{opacity:0; top:18px;}
+    100%{opacity:0; top:6px;}
+  }
+
+  section.panel{
+    max-width:1100px;
+    margin:0 auto;
+    padding:110px 28px;
+  }
+  .reveal{
+    opacity:0;
+    transform:translateY(36px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .section-head{
+    text-align:center;
+    margin-bottom:56px;
+    position:relative;
+  }
+  .section-head .eyebrow{
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    font-size:0.75rem;
+    color:var(--gold);
+  }
+  .section-head h2{
+    font-size:clamp(1.8rem, 3.6vw, 2.6rem);
+    margin-top:10px;
+    color:var(--emerald-deep);
+  }
+  .ornament{
+    width:26px; height:26px;
+    border:1px solid var(--gold);
+    margin:18px auto 0;
+    animation: ornamentSpin 12s linear infinite;
+    opacity:0.7;
+  }
+  .ornament::before{
+    content:'';
+    display:block;
+    width:100%;height:100%;
+    border:1px solid var(--gold);
+    transform:rotate(45deg) scale(0.6);
+  }
+  @keyframes ornamentSpin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+  }
+
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .about-photo{
+    position:relative;
+    aspect-ratio: 4/5;
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(11,61,46,0.18);
+    transform-style:preserve-3d;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    will-change:transform;
+  }
+  .about-photo img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    transition: transform 0.8s ease;
+  }
+  .about-photo:hover img{transform:scale(1.08);}
+  .about-photo:hover{box-shadow:0 30px 60px rgba(11,61,46,0.28);}
+  .about-photo::after{
+    content:'';
+    position:absolute;
+    inset:14px;
+    border:1px solid var(--gold);
+    pointer-events:none;
+  }
+  .about-text p{
+    line-height:1.9;
+    color:var(--page-text-soft);
+    margin-bottom:18px;
+    font-size:1rem;
+  }
+  .stats-row{
+    display:flex;
+    gap:36px;
+    margin-top:34px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    text-align:left;
+  }
+  .stat .num{
+    font-family:'Marcellus', serif;
+    font-size:2rem;
+    color:var(--emerald-deep);
+    display:block;
+  }
+  .stat .label{
+    font-size:0.75rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+
+  .faq-item{
+    border-bottom:1px solid var(--surface-line);
+    padding:22px 0;
+  }
+  .faq-q{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    cursor:pointer;
+    font-family:'Marcellus', serif;
+    font-size:1.1rem;
+    color:var(--emerald-deep);
+  }
+  .faq-q .plus{
+    font-size:1.4rem;
+    color:var(--gold);
+    transition:transform 0.4s ease;
+    font-family:'Jost', sans-serif;
+    flex-shrink:0;
+  }
+  .faq-item.open .faq-q .plus{transform:rotate(135deg);}
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.45s ease, opacity 0.4s ease, margin-top 0.4s ease;
+    opacity:0;
+    color:var(--page-text-soft);
+    line-height:1.85;
+  }
+  .faq-item.open .faq-a{
+    max-height:260px;
+    opacity:1;
+    margin-top:14px;
+  }
+
+  .contact-wrap{
+    background:linear-gradient(180deg, var(--emerald-deep), var(--emerald-darker));
+    border-radius:6px;
+    padding:64px 40px;
+    color:var(--cream);
+    position:relative;
+    overflow:hidden;
+  }
+  .contact-wrap::before{
+    content:'';
+    position:absolute;
+    width:340px; height:340px;
+    background:radial-gradient(circle, rgba(201,162,39,0.18), transparent 70%);
+    top:-120px; right:-120px;
+    border-radius:50%;
+  }
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap:36px;
+    position:relative;
+    z-index:1;
+  }
+  .contact-card{
+    text-align:center;
+    padding:24px 12px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    transition:transform 0.3s ease, border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+    will-change:transform;
+  }
+  .contact-card:hover{
+    border-color:var(--gold);
+    transform:translateY(-8px);
+    background:rgba(247,243,232,0.04);
+    box-shadow:0 18px 34px rgba(0,0,0,0.25);
+  }
+  .contact-card .icon{
+    transition: transform 0.4s ease;
+    font-size:1.6rem;
+    color:var(--gold);
+    margin-bottom:12px;
+  }
+  .contact-card:hover .icon{
+    transform:scale(1.2) rotate(-6deg);
+  }
+  .contact-card h3{
+    font-size:1rem;
+    letter-spacing:0.08em;
+    margin-bottom:8px;
+  }
+  .contact-card p{
+    font-size:0.88rem;
+    color:rgba(247,243,232,0.75);
+    line-height:1.6;
+  }
+
+  .comments-wrap{
+    background:var(--surface);
+    border:1px solid var(--surface-line);
+    border-radius:8px;
+    padding:48px 36px;
+    transition: background 0.45s ease, border-color 0.45s ease;
+  }
+  .comment-note{
+    text-align:center;
+    font-size:0.82rem;
+    color:var(--page-text-soft);
+    max-width:560px;
+    margin:0 auto 36px;
+    line-height:1.7;
+  }
+  .comment-form{
+    max-width:520px;
+    margin:0 auto 44px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .comment-form input,
+  .comment-form textarea{
+    width:100%;
+    padding:14px 16px;
+    background:var(--card-bg);
+    border:1px solid var(--surface-line);
+    border-radius:4px;
+    color:var(--page-text);
+    font-family:'Jost', sans-serif;
+    font-size:0.92rem;
+    resize:vertical;
+    transition:border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .comment-form input:focus,
+  .comment-form textarea:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(255,219,99,0.15);
+  }
+  .comment-form textarea{min-height:110px;}
+  .comment-form .row-inline{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .comment-form .row-inline > *{flex:1; min-width:160px;}
+  .comment-submit{
+    align-self:flex-start;
+    background:var(--emerald-deep);
+    color:#fff;
+    border:1px solid var(--emerald-deep);
+    padding:13px 30px;
+    font-size:0.82rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    border-radius:4px;
+    cursor:pointer;
+    transition:transform 0.25s ease, box-shadow 0.3s ease, background 0.3s ease;
+  }
+  .comment-submit:hover{
+    background:#00c98c;
+    box-shadow:0 10px 24px rgba(0,179,125,0.3);
+    transform:translateY(-2px);
+  }
+  .comment-status{
+    max-width:520px;
+    margin:0 auto 30px;
+    padding:14px 18px;
+    border-radius:4px;
+    font-size:0.85rem;
+    line-height:1.6;
+    display:none;
+    align-items:center;
+    gap:10px;
+    justify-content:space-between;
+    background:var(--card-bg);
+    border:1px solid var(--surface-line);
+    animation: revealUp 0.5s ease both;
+  }
+  .comment-status.show{display:flex; flex-wrap:wrap;}
+  .comment-status .status-actions{
+    display:flex;
+    gap:14px;
+  }
+  .comment-status .status-actions button{
+    background:none;
+    border:none;
+    font-family:inherit;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--emerald-deep);
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    padding:2px;
+  }
+  [data-theme="dark"] .comment-status .status-actions button{color:var(--gold-soft);}
+
+  .comment-wall{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:20px;
+  }
+  .comment-card{
+    background:var(--card-bg);
+    border:1px solid var(--surface-line);
+    border-radius:6px;
+    padding:22px 20px;
+    opacity:0;
+    transform:translateY(18px) scale(0.98);
+    animation: cardIn 0.6s ease forwards;
+  }
+  @keyframes cardIn{
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  .comment-card .c-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .comment-card .c-avatar{
+    width:38px; height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--emerald-deep), var(--emerald-darker));
+    color:var(--gold-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Marcellus', serif;
+    font-size:0.95rem;
+    flex-shrink:0;
+  }
+  .comment-card .c-name{
+    font-family:'Marcellus', serif;
+    font-size:0.95rem;
+    color:var(--emerald-deep);
+  }
+  [data-theme="dark"] .comment-card .c-name{color:var(--gold-soft);}
+  .comment-card .c-date{
+    font-size:0.7rem;
+    letter-spacing:0.06em;
+    color:var(--page-text-soft);
+    opacity:0.75;
+  }
+  .comment-card .c-text{
+    font-size:0.9rem;
+    line-height:1.7;
+    color:var(--page-text-soft);
+  }
+  .comment-card.you{
+    border-color:var(--gold);
+  }
+  .comment-card .you-badge{
+    font-size:0.62rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    background:var(--gold);
+    color:var(--emerald-darker);
+    padding:2px 8px;
+    border-radius:20px;
+    margin-left:auto;
+  }
+  .comment-empty{
+    text-align:center;
+    color:var(--page-text-soft);
+    font-size:0.88rem;
+    padding:20px 0;
+    opacity:0.8;
+  }
+
+  footer{
+    text-align:center;
+    padding:40px 24px;
+    background:var(--emerald-darker);
+    color:rgba(247,243,232,0.55);
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+  }
+  footer .diamond{
+    width:6px;height:6px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    display:inline-block;
+    margin:0 10px;
+  }
+
+  @media (max-width:860px){
+    .about-grid{grid-template-columns:1fr; gap:36px;}
+    .contact-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:1024px){
+    .nav-links{
+      position:fixed;
+      top:70px; right:0;
+      background:var(--emerald-deep);
+      flex-direction:column;
+      width:220px;
+      padding:24px;
+      gap:22px;
+      transform:translateX(100%);
+      transition:transform 0.4s ease;
+      border-left:1px solid var(--line);
+      height:calc(100vh - 70px);
+    }
+    .nav-links.open{transform:translateX(0);}
+    .burger{display:flex;}
+  }
+  @media (max-width:720px){
+    section.panel{padding:80px 20px;}
+    .comments-wrap{padding:36px 20px;}
+    .comment-form .row-inline{flex-direction:column;}
+  }
+
+  @media (max-width:420px){
+    .brand span{font-size:0.95rem;}
+    nav{padding:12px 18px;}
+    .theme-toggle{width:38px; height:38px;}
+  }
+
+  :focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  .corner-credit{
+    position:absolute;
+    top:18px;
+    left:18px;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .corner-credit img{
+    width:22px; height:22px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--gold);
+    background:var(--emerald-darker);
+    flex-shrink:0;
+  }
+  .corner-credit span{
+    font-family:'Marcellus', serif;
+    color:var(--cream);
+    font-size:0.65rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  @media (max-width:420px){
+    .corner-credit{padding:4px 10px 4px 4px; gap:6px;}
+    .corner-credit img{width:18px; height:18px;}
+    .corner-credit span{font-size:0.55rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="curtain"><div class="curtain-mark"></div></div>
+
+<header>
+  <nav>
+    <div class="brand">
+      <img src="IMG.png" alt="Al Falah Academy crest">
+      <span>AL FALAH ACADEMY</span>
+    </div>
+    <div class="nav-right">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#comments">Comments</a></li>
+        <li><a href="#contact">Contacts</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark mode" aria-pressed="false">
+        <svg class="icon-moon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></svg>
+      </button>
+      <button class="burger" id="burger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="corner-credit">
+    <img src="HYBOSO.png" alt="Hyboso Studios logo" onerror="this.style.display='none'">
+    <p>MADE BY</p>
+    <h3>HYBOSO STUDIOS</h3>
+  </div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-crest"><img src="IMG.png" alt="Al Falah Academy emblem"></div>
+  <p class="eyebrow">Al Falah Academy</p>
+  <h1>WE ARE HERE TO MAKE<br>FUTURE LEADERS</h1>
+  <div class="motif-line">
+    <span class="bar"></span><span class="diamond"></span><span class="bar"></span>
+  </div>
+  <h2>Where discipline, knowledge, and character are shaped together</h2>
+  <div class="hero-cta">
+    <a href="#about" class="btn btn-solid">Discover Our Story</a>
+    <a href="#contact" class="btn btn-outline">Get In Touch</a>
+  </div>
+  <div class="scroll-cue"></div>
+</section>
+
+<section class="panel" id="about">
+  <div class="section-head reveal">
+    <p class="eyebrow">About Us</p>
+    <h2>Built On Purpose, Not Prestige</h2>
+    <div class="ornament"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-photo reveal stagger-1" id="tiltPhoto">
+      <img src="IMG2.png" alt="Students at Al Falah Academy">
+    </div>
+    <div class="about-text reveal stagger-2">
+      <p>Al Falah Academy was founded on a simple belief: every student carries the potential for leadership, and it is the responsibility of a school to draw that potential out — not just fill a seat.</p>
+      <p>Our classrooms combine rigorous academics with strong character formation, guided by teachers who see every student as an individual rather than a number in a register.</p>
+      <p>We measure our success not by exam scores alone, but by the kind of people our students become long after they leave our halls.</p>
+      <div class="stats-row">
+        <div class="stat"><span class="num" data-count="15+" data-suffix="+">0</span><span class="label">Years of Excellence</span></div>
+        <div class="stat"><span class="num" data-count="50+" data-suffix="+">0</span><span class="label">Students Guided</span></div>
+        <div class="stat"><span class="num" data-count="5+" data-suffix="+">0</span><span class="label">Dedicated Faculty</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="faq">
+  <div class="section-head reveal">
+    <p class="eyebrow">Frequently Asked</p>
+    <h2>Questions, Answered</h2>
+    <div class="ornament"></div>
+  </div>
+  <div>
+    <div class="faq-item open reveal stagger-1">
+      <div class="faq-q"><span>What programs does Al Falah Academy offer?</span><span class="plus">+</span></div>
+      <div class="faq-a"><p>We offer a full academic track from primary through secondary levels, alongside character-building and all classes from O Level and Matric to FSc and higher levels.</p></div>
+    </div>
+    <div class="faq-item reveal stagger-2">
+      <div class="faq-q"><span>How do I apply for admission?</span><span class="plus">+</span></div>
+      <div class="faq-a"><p>Reach out through the Contacts section below and talk to us — we'll walk you through the next steps.</p></div>
+    </div>
+    <div class="faq-item reveal stagger-3">
+      <div class="faq-q"><span>What makes Al Falah Academy different?</span><span class="plus">+</span></div>
+      <div class="faq-a"><p>Small class sizes and round-the-clock support for our students, so no one falls through the cracks.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="comments">
+  <div class="section-head reveal">
+    <p class="eyebrow">Community Voices</p>
+    <h2>Share Your Thoughts</h2>
+    <div class="ornament"></div>
+  </div>
+  <div class="comments-wrap reveal">
+    <p class="comment-note">One voice per device — that keeps this wall honest. Your comment is saved right here on your own browser, so you can edit or remove it any time. Because this page runs without a server, comments are stored locally on your device rather than broadcast to every visitor everywhere.</p>
+
+    <form class="comment-form" id="commentForm">
+      <div class="row-inline">
+        <input type="text" id="commentName" placeholder="Your name" maxlength="40" required>
+      </div>
+      <textarea id="commentText" placeholder="Tell us what you think of Al Falah Academy..." maxlength="300" required></textarea>
+      <button type="submit" class="comment-submit" id="commentSubmitBtn">Post Comment</button>
+    </form>
+
+    <div class="comment-status" id="commentStatus">
+      <span id="commentStatusText"></span>
+      <div class="status-actions">
+        <button type="button" id="editCommentBtn">Edit</button>
+        <button type="button" id="deleteCommentBtn">Delete</button>
+      </div>
+    </div>
+
+    <div class="comment-wall" id="commentWall"></div>
+    <p class="comment-empty" id="commentEmpty">No comments yet — be the first to share your thoughts.</p>
+  </div>
+</section>
+
+<section class="panel" id="contact">
+  <div class="section-head reveal">
+    <p class="eyebrow">GET IN TOUCH</p>
+    <div class="ornament"></div>
+  </div>
+  <div class="contact-wrap reveal">
+    <div class="contact-grid">
+      <div class="contact-card reveal stagger-1">
+        <div class="icon">&#9742;</div>
+        <h3>PHONE</h3>
+        <p>+92 0341-6029834</p>
+      </div>
+      <div class="contact-card reveal stagger-2">
+        <div class="icon">&#9993;</div>
+        <h3>ABOUT US</h3>
+        <p>Our mission is to make kids better in studies — not by beating, but through one-to-one mentorship, even in the hardest times.</p>
+      </div>
+      <div class="contact-card reveal stagger-3">
+        <div class="icon">&#8982;</div>
+        <h3>CAMPUS</h3>
+        <p>LOCATION: [GUJRAT.MODEL TOWN.KHEPRANWALA]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>AL FALAH ACADEMY</span>
+  <span class="diamond"></span>
+  <span>&copy; <span id="year"></span> · Made by Hyboso Studios</span>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+
+  function setMenuOpen(open){
+    navLinks.classList.toggle('open', open);
+    if(open){
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    }
+  }
+
+  burger.addEventListener('click', () => setMenuOpen(!navLinks.classList.contains('open')));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenuOpen(false)));
+
+  /* Swipe left-to-right anywhere to open the menu, right-to-left to close it (mobile/tablet only) */
+  (function(){
+    let touchStartX = 0, touchStartY = 0, tracking = false;
+    const SWIPE_THRESHOLD = 60;
+    const MAX_VERTICAL_DRIFT = 60;
+
+    document.addEventListener('touchstart', (e) => {
+      if(window.innerWidth > 1024) return;
+      if(!e.touches || e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      tracking = true;
+    }, {passive:true});
+
+    document.addEventListener('touchend', (e) => {
+      if(!tracking) return;
+      tracking = false;
+      if(window.innerWidth > 1024) return;
+      const touch = e.changedTouches && e.changedTouches[0];
+      if(!touch) return;
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      if(Math.abs(deltaY) > MAX_VERTICAL_DRIFT) return;
+
+      if(deltaX > SWIPE_THRESHOLD && !navLinks.classList.contains('open')){
+        setMenuOpen(true);
+      } else if(deltaX < -SWIPE_THRESHOLD && navLinks.classList.contains('open')){
+        setMenuOpen(false);
+      }
+    }, {passive:true});
+  })();
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el => io.observe(el));
+
+  const particleWrap = document.getElementById('particles');
+  const particleCount = window.innerWidth < 720 ? 14 : 28;
+  for(let i=0; i<particleCount; i++){
+    const p = document.createElement('span');
+    const left = Math.random()*100;
+    const duration = 8 + Math.random()*10;
+    const delay = Math.random()*10;
+    const size = 2 + Math.random()*3;
+    p.style.left = left + '%';
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.animationDuration = duration + 's';
+    p.style.animationDelay = delay + 's';
+    particleWrap.appendChild(p);
+  }
+
+  const heroEl = document.querySelector('.hero');
+  const glow = document.getElementById('cursorGlow');
+  heroEl.addEventListener('mousemove', (e) => {
+    const rect = heroEl.getBoundingClientRect();
+    glow.style.left = (e.clientX - rect.left) + 'px';
+    glow.style.top = (e.clientY - rect.top) + 'px';
+  });
+
+  const tiltPhoto = document.getElementById('tiltPhoto');
+  if(tiltPhoto){
+    tiltPhoto.addEventListener('mousemove', (e) => {
+      const rect = tiltPhoto.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      tiltPhoto.style.transform = `perspective(800px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`;
+    });
+    tiltPhoto.addEventListener('mouseleave', () => {
+      tiltPhoto.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg)';
+    });
+  }
+
+  const counters = document.querySelectorAll('.num[data-count]');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-count'), 10);
+        const suffix = el.getAttribute('data-suffix') || '';
+        const duration = 1600;
+        const start = performance.now();
+        function tick(now){
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target) + suffix;
+          if(progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        counterIO.unobserve(el);
+      }
+    });
+  }, {threshold:0.4});
+  counters.forEach(c => counterIO.observe(c));
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+
+  function currentTheme(){ return root.getAttribute('data-theme') || 'light'; }
+  function setPressed(){ themeToggle.setAttribute('aria-pressed', currentTheme() === 'dark' ? 'true' : 'false'); }
+  setPressed();
+
+  themeToggle.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('af-theme', next); }catch(e){}
+    setPressed();
+  });
+
+  try{
+    if(!localStorage.getItem('af-theme') && window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if(!localStorage.getItem('af-theme')){
+          root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+          setPressed();
+        }
+      });
+    }
+  }catch(e){}
+
+  (function(){
+    const STORAGE_KEY = 'af-my-comment';
+    const form = document.getElementById('commentForm');
+    const nameInput = document.getElementById('commentName');
+    const textInput = document.getElementById('commentText');
+    const submitBtn = document.getElementById('commentSubmitBtn');
+    const status = document.getElementById('commentStatus');
+    const statusText = document.getElementById('commentStatusText');
+    const editBtn = document.getElementById('editCommentBtn');
+    const deleteBtn = document.getElementById('deleteCommentBtn');
+    const wall = document.getElementById('commentWall');
+    const emptyMsg = document.getElementById('commentEmpty');
+
+    function loadComment(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }catch(e){ return null; }
+    }
+    function saveComment(data){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+    }
+    function clearComment(){
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    }
+    function initials(name){
+      return name.trim().split(/\s+/).slice(0,2).map(w => w[0] ? w[0].toUpperCase() : '').join('') || '?';
+    }
+    function escapeHTML(str){
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    function formatDate(iso){
+      const d = new Date(iso);
+      return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+    }
+
+    function render(){
+      const comment = loadComment();
+      wall.innerHTML = '';
+
+      if(comment){
+        wall.innerHTML = `
+          <div class="comment-card you">
+            <div class="c-head">
+              <div class="c-avatar">${escapeHTML(initials(comment.name))}</div>
+              <div>
+                <div class="c-name">${escapeHTML(comment.name)}</div>
+                <div class="c-date">${formatDate(comment.date)}</div>
+              </div>
+              <span class="you-badge">You</span>
+            </div>
+            <div class="c-text">${escapeHTML(comment.text)}</div>
+          </div>
+        `;
+        emptyMsg.style.display = 'none';
+
+        form.style.display = 'none';
+        status.classList.add('show');
+        statusText.textContent = "You've already shared a comment from this device.";
+      } else {
+        emptyMsg.style.display = 'block';
+        form.style.display = 'flex';
+        status.classList.remove('show');
+        nameInput.value = '';
+        textInput.value = '';
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const text = textInput.value.trim();
+      if(!name || !text) return;
+
+      submitBtn.disabled = true;
+      saveComment({ name, text, date: new Date().toISOString() });
+      render();
+    });
+
+    editBtn.addEventListener('click', () => {
+      const comment = loadComment();
+      if(!comment) return;
+      nameInput.value = comment.name;
+      textInput.value = comment.text;
+      clearComment();
+      form.style.display = 'flex';
+      status.classList.remove('show');
+      wall.innerHTML = '';
+      emptyMsg.style.display = 'none';
+      nameInput.focus();
+    });
+
+    deleteBtn.addEventListener('click', () => {
+      clearComment();
+      render();
+    });
+
+    render();
+  })();
+</script>
+
+</body>
+</html>
